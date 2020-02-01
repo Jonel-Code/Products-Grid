@@ -11,7 +11,7 @@ export default class ProductService {
 
         if (Array.isArray(sortBy) && sortBy.length > 0) {
             query['_order'] = 'asc';
-            query['_sort'] = sort.by.join(',');
+            query['_sort'] = sortBy.join(',');
         }
 
         const queryParam = new URLSearchParams(query);

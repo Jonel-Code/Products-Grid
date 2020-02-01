@@ -6,7 +6,7 @@ function mapProductItem(product) {
     return { ...product, date: new Date(product.date) };
 }
 
-function productsListingHook(limit = 10, sortBy = []) {
+function productsListingHook(limit = 10) {
 
     const productService = React.useMemo(() => new ProductService(), []);
 
@@ -15,11 +15,35 @@ function productsListingHook(limit = 10, sortBy = []) {
     const [fetchError, setFetchError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [pageIndex, setPageIndex] = useState(1);
+    const [orderBy, setOrderBy] = useState([]);
+
+    const resetListing = () => {
+        setListings([]);
+        setPageIndex(1);
+        setIsEndOfListing(false);
+        setIsLoading(false);
+    };
+
+    const appendOrderBy = (order) => {
+        if (isLoading) {
+            return;
+        }
+        resetListing();
+        setOrderBy((prev) => {
+            if (prev.includes(order)) {
+                prev.splice(prev.indexOf(order), 1);
+            } else {
+                prev.push(order);
+            }
+            return [...prev];
+        });
+    };
+
 
     const fetchListing = () => {
         if (!isLoading) {
             setIsLoading(true);
-            productService.fetchProductList({ index: pageIndex, limit }, sortBy)
+            productService.fetchProductList({ index: pageIndex, limit }, orderBy)
                 .then(
                     (response) => {
                         if (Array.isArray(response)) {
@@ -41,22 +65,22 @@ function productsListingHook(limit = 10, sortBy = []) {
         }
     };
 
-    const data = { listings, isEndOfListing, fetchError, isLoading };
-
-    return [data, fetchListing];
+    const data = { listings, isEndOfListing, fetchError, isLoading, orderBy };
+    const methods = { appendOrderBy, fetchListing, resetListing };
+    return [data, methods];
 }
 
 function App() {
 
-    const [productData, fetchListing] = productsListingHook(5);
+    const [productData, methods] = productsListingHook(5);
 
     useLayoutEffect(() => {
         console.log('productListing', productData.listings);
     }, [productData.listings]);
 
     useLayoutEffect(() => {
-        fetchListing();
-    }, []);
+        methods.fetchListing();
+    }, [productData.orderBy]);
 
     useLayoutEffect(() => {
         console.log('fetch error', productData.fetchError);
@@ -68,7 +92,10 @@ function App() {
             <h1>Hello World!!</h1>
             <h3>{productData.isLoading ? 'loading' : ''}</h3>
             <pre style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(productData.listings)}</pre>
-            <button onClick={fetchListing}>add item</button>
+            <button onClick={methods.fetchListing}>add item</button>
+            <button onClick={() => methods.appendOrderBy('id')}>order by id</button>
+            <button onClick={() => methods.appendOrderBy('size')}>order by size</button>
+            <button onClick={() => methods.appendOrderBy('price')}>order by price</button>
         </div>
     );
 }
