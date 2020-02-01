@@ -1,6 +1,7 @@
 import React, { useState, useLayoutEffect, useEffect } from 'react';
 import './App.css';
 import ProductService from './services/ProductService';
+import AdsBanner from './components/AdsBanner';
 
 function mapProductItem(product) {
     return { ...product, date: new Date(product.date) };
@@ -39,7 +40,6 @@ function productsListingHook(limit = 10) {
         });
     };
 
-
     const fetchListing = () => {
         if (!isLoading) {
             setIsLoading(true);
@@ -48,8 +48,8 @@ function productsListingHook(limit = 10) {
                     (response) => {
                         if (Array.isArray(response)) {
                             if (response.length > 0) {
-                                setListings((prev) => [...prev, ...response.map(mapProductItem)]);
                                 setPageIndex((prev) => prev + 1);
+                                setListings((prev) => [...prev, ...response.map(mapProductItem)]);
                             }
                             setIsEndOfListing(() => response.length > 0);
                         }
@@ -65,14 +65,17 @@ function productsListingHook(limit = 10) {
         }
     };
 
-    const data = { listings, isEndOfListing, fetchError, isLoading, orderBy };
+    const data = { listings, isEndOfListing, fetchError, isLoading, orderBy, pageIndex };
     const methods = { appendOrderBy, fetchListing, resetListing };
     return [data, methods];
 }
 
+const PAGE_SIZE = 5;
+const maxViewSize = 10;
+
 function App() {
 
-    const [productData, methods] = productsListingHook(5);
+    const [productData, methods] = productsListingHook(PAGE_SIZE);
 
     useLayoutEffect(() => {
         console.log('productListing', productData.listings);
@@ -85,11 +88,14 @@ function App() {
     useLayoutEffect(() => {
         console.log('fetch error', productData.fetchError);
     }, [productData.fetchError]);
-
-
     return (
         <div className='app'>
             <h1>Hello World!!</h1>
+            <AdsBanner
+                productsListing={productData.listings}
+                maxViewSize={maxViewSize}
+                pageSize={PAGE_SIZE}
+            />
             <h3>{productData.isLoading ? 'loading' : ''}</h3>
             <pre style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(productData.listings)}</pre>
             <button onClick={methods.fetchListing}>add item</button>
