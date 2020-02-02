@@ -81,7 +81,7 @@ function productsListingHook(limit = 10) {
 function preFetchHook(limit = 10, currentIndex = 1, orderBy = [], idleTimeBeforePreFetch = 5) {
 
     const productService = React.useMemo(() => new ProductService(), []);
-    const defaultIdleTimer = { time: 0, completed: false, timer: null };
+    const defaultIdleTimer = { time: 0, timer: null };
 
     const [isFetching, setIsFetching] = useState(false);
     const [preFetchedList, setPreFetchedList] = useState([]);
@@ -122,10 +122,6 @@ function preFetchHook(limit = 10, currentIndex = 1, orderBy = [], idleTimeBefore
         setIdleTimer({ ...defaultIdleTimer });
     };
 
-    const completeCountDown = () => {
-        clearTimer();
-        setIdleTimer((prev) => ({ ...prev, time: 0, completed: true }));
-    };
 
     const incrementTimer = () => {
         setIdleTimer((prev) => {
@@ -146,7 +142,7 @@ function preFetchHook(limit = 10, currentIndex = 1, orderBy = [], idleTimeBefore
 
     useLayoutEffect(() => {
         if (idleTimer.time >= idleTimeBeforePreFetch) {
-            completeCountDown();
+            clearTimer();
             initializePreFetch();
         }
     }, [idleTimer]);
