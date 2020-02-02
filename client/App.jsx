@@ -3,6 +3,7 @@ import './App.css';
 import ProductService from './services/ProductService';
 import AdsBanner from './components/AdsBanner';
 import ProductsGrid from './components/ProductsGrid';
+import DivEndScroll from './components/DivEndScroll';
 
 function productsListingHook(limit = 10) {
 
@@ -19,7 +20,7 @@ function productsListingHook(limit = 10) {
         setListings([]);
         setPageIndex(1);
         setIsEndOfListing(false);
-        setIsLoading(false);
+        // setIsLoading(false);
     };
 
     const appendOrderBy = (order) => {
@@ -68,7 +69,7 @@ function productsListingHook(limit = 10) {
                     return null;
                 })
                 .finally(() => {
-                    setIsLoading(false);
+                    setIsLoading((prev) => false);
                 });
         }
     };
@@ -86,6 +87,18 @@ function preFetchHook(limit = 10, currentIndex = 1, orderBy = [], idleTimeBefore
     const [isFetching, setIsFetching] = useState(false);
     const [preFetchedList, setPreFetchedList] = useState([]);
     const [idleTimer, setIdleTimer] = useState({ ...defaultIdleTimer });
+
+    const clearTimer = () => {
+        if (idleTimer.timer) {
+            console.log('clear timer');
+            clearInterval(idleTimer.timer);
+        }
+    };
+
+    const resetIdleCountdown = () => {
+        clearTimer();
+        setIdleTimer({ ...defaultIdleTimer });
+    };
 
     const resetPreFetch = () => {
         setIsFetching(false);
@@ -111,18 +124,6 @@ function preFetchHook(limit = 10, currentIndex = 1, orderBy = [], idleTimeBefore
             });
     };
 
-    const clearTimer = () => {
-        if (idleTimer.timer) {
-            clearInterval(idleTimer.timer);
-        }
-    };
-
-    const resetIdleCountdown = () => {
-        clearTimer();
-        setIdleTimer({ ...defaultIdleTimer });
-    };
-
-
     const incrementTimer = () => {
         setIdleTimer((prev) => {
             console.log('prev.time', prev.time + 1);
@@ -142,10 +143,11 @@ function preFetchHook(limit = 10, currentIndex = 1, orderBy = [], idleTimeBefore
 
     useLayoutEffect(() => {
         if (idleTimer.time >= idleTimeBeforePreFetch) {
-            clearTimer();
+            resetPreFetch();
             initializePreFetch();
         }
     }, [idleTimer]);
+
 
     const methods = { initializeIdleCountdown, resetPreFetch };
     const preFetchState = { isFetching, preFetchedList };
@@ -153,7 +155,7 @@ function preFetchHook(limit = 10, currentIndex = 1, orderBy = [], idleTimeBefore
     return [preFetchState, methods];
 }
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 10;
 const ITEM_COUNT_BEFORE_NEW_ADS = 20;
 
 function App() {
@@ -162,6 +164,9 @@ function App() {
     const [preFetchState, preFetchMethods] = preFetchHook(PAGE_SIZE, productData.pageIndex, productData.orderBy);
 
     const addNewItems = () => {
+        if (productData.isLoading) {
+            return;
+        }
         if (preFetchState.preFetchedList.length > 0) {
             fetchMethods.appendNewItems(preFetchState.preFetchedList);
         } else {
@@ -175,43 +180,76 @@ function App() {
         preFetchMethods.resetPreFetch();
     };
 
+    const selectedSort = (sortBy) => productData.orderBy.indexOf(sortBy) >= 0;
+    const sortButtonStyle = (sortBy) => `btn ${selectedSort(sortBy) ? 'btn-primary' : 'btn-outline-primary'}`;
+
     // useLayoutEffect(() => {
     //     console.log('preFetchedList', preFetchState);
     // }, [preFetchState.preFetchedList]);
 
+    // useLayoutEffect(() => {
+    //     addNewItems();
+    // }, []);
+
     useLayoutEffect(() => {
-        console.log('productListing', productData.listings);
-        console.log('preFetchedList', preFetchState);
         preFetchMethods.resetPreFetch();
         preFetchMethods.initializeIdleCountdown();
     }, [productData.listings]);
 
-    useLayoutEffect(() => {
-        fetchMethods.fetchListing();
-    }, [productData.orderBy]);
-
-    useLayoutEffect(() => {
-        console.log('fetch error', productData.fetchError);
-    }, [productData.fetchError]);
-
     return (
-        <div className='app'>
-            <h1>Hello World!!</h1>
+        <DivEndScroll
+            className='app'
+            onEnd={addNewItems}
+        >
             <AdsBanner
                 productsListing={productData.listings}
                 maxViewSize={ITEM_COUNT_BEFORE_NEW_ADS}
                 pageSize={PAGE_SIZE}
             />
-            <div className='products_container' >
-                <ProductsGrid products={productData.listings} />
+            <div className="sticky-top nav_header">
+                <div>
+                    <h1>Ascii Emoji Shop</h1>
+                </div>
+                <div className="btn-group mr-2 sort_buttons" role="group" aria-label="Basic example">
+                    <div className='middle_align'> Order by:</div>
+                    <button
+                        type="button"
+                        disabled={productData.isLoading}
+                        className={sortButtonStyle('id')}
+                        onClick={orderBy('id')}>
+                        id
+                        </button>
+                    <button
+                        type="button"
+                        disabled={productData.isLoading}
+                        className={sortButtonStyle('size')}
+                        onClick={orderBy('size')}>
+                        size
+                        </button>
+                    <button
+                        type="button"
+                        disabled={productData.isLoading}
+                        className={sortButtonStyle('price')}
+                        onClick={orderBy('price')}>
+                        price
+                    </button>
+                </div>
 
             </div>
-            <h3>{productData.isLoading ? 'loading' : ''}</h3>
-            <button onClick={addNewItems}>add item</button>
-            <button onClick={orderBy('id')}>order by id</button>
-            <button onClick={orderBy('size')}>order by size</button>
-            <button onClick={orderBy('price')}>order by price</button>
-        </div >
+
+            <div className='products_container' >
+                <ProductsGrid products={productData.listings} />
+            </div>
+            <div className="d-flex justify-content-center">
+                {productData.isLoading
+                    ? <div className="spinner-grow text-info" style={{ width: '4em', height: '4em' }}>
+                        <span className="sr-only">Loading...</span>
+                    </div>
+                    : ''
+                }
+
+            </div>
+        </DivEndScroll>
     );
 }
 

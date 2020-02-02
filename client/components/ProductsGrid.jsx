@@ -7,7 +7,7 @@ function ProductsGrid({ products }) {
     return <div className='products_grid' >
         {products.map((item, i) =>
             <ProductItem
-                key={i}
+                key={item.id}
                 face={item.face}
                 size={item.size}
                 price={item.price}

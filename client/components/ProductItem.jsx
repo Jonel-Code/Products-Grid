@@ -5,10 +5,12 @@ import { parseToDollar } from '../util/Number';
 import './ProductItem.css';
 
 function ProductItem({ face, size, price, date }) {
-    return <div className='product_item' >
-        <pre style={{ fontSize: `${size}px` }}>
-            {face}
-        </pre>
+    return <div className='product_item product_card' >
+        <div className='face'>
+            <pre style={{ fontSize: `${size}px` }}>
+                {face}
+            </pre>
+        </div>
         <hr />
         <p>
             <span>{parseToDollar(price)}</span>

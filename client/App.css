@@ -1,7 +1,22 @@
-.app{
-    height: calc( 100% - 0.4px);
-    width: 100%;
-    position: absolute;
-    overflow: auto;
+.nav_header{
+    background-color: #f1f1f1;
+    box-shadow: #5252523b 1px 5px 20px 0px;
+    display: flex;
+    justify-content: space-between;
+    padding: 1em;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
+.sort_buttons button{
+    height: fit-content;
+}
+
+.middle_align{
+    align-self: center;
+    margin-right: 1em;
+}
+
+.products_container{
+    padding: 1em;
+}
