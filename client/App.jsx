@@ -2,10 +2,7 @@ import React, { useState, useLayoutEffect, useEffect } from 'react';
 import './App.css';
 import ProductService from './services/ProductService';
 import AdsBanner from './components/AdsBanner';
-
-function mapProductItem(product) {
-    return { ...product, date: new Date(product.date) };
-}
+import ProductsGrid from './components/ProductsGrid';
 
 function productsListingHook(limit = 10) {
 
@@ -48,7 +45,7 @@ function productsListingHook(limit = 10) {
         if (newItems.length === 0) {
             return;
         }
-        setListings((prev) => [...prev, ...newItems.map(mapProductItem)]);
+        setListings((prev) => [...prev, ...newItems]);
         incrementPageIndex();
     };
 
@@ -157,7 +154,7 @@ function preFetchHook(limit = 10, currentIndex = 1, orderBy = [], idleTimeBefore
 }
 
 const PAGE_SIZE = 5;
-const MAX_VIEW_SIZE = 10;
+const ITEM_COUNT_BEFORE_NEW_ADS = 20;
 
 function App() {
 
@@ -170,6 +167,11 @@ function App() {
         } else {
             fetchMethods.fetchListing();
         }
+        preFetchMethods.resetPreFetch();
+    };
+
+    const orderBy = (by) => () => {
+        fetchMethods.appendOrderBy(by);
         preFetchMethods.resetPreFetch();
     };
 
@@ -197,16 +199,19 @@ function App() {
             <h1>Hello World!!</h1>
             <AdsBanner
                 productsListing={productData.listings}
-                maxViewSize={MAX_VIEW_SIZE}
+                maxViewSize={ITEM_COUNT_BEFORE_NEW_ADS}
                 pageSize={PAGE_SIZE}
             />
-            <pre style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(productData.listings)}</pre>
+            <div className='products_container' >
+                <ProductsGrid products={productData.listings} />
+
+            </div>
             <h3>{productData.isLoading ? 'loading' : ''}</h3>
             <button onClick={addNewItems}>add item</button>
-            <button onClick={() => fetchMethods.appendOrderBy('id')}>order by id</button>
-            <button onClick={() => fetchMethods.appendOrderBy('size')}>order by size</button>
-            <button onClick={() => fetchMethods.appendOrderBy('price')}>order by price</button>
-        </div>
+            <button onClick={orderBy('id')}>order by id</button>
+            <button onClick={orderBy('size')}>order by size</button>
+            <button onClick={orderBy('price')}>order by price</button>
+        </div >
     );
 }
 
