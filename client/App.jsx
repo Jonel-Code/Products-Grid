@@ -44,7 +44,10 @@ function productsListingHook(limit = 10) {
         setPageIndex((prev) => prev + 1);
     };
 
-    const appendNewItems = (newItems) => {
+    const appendNewItems = (newItems = []) => {
+        if (newItems.length === 0) {
+            return;
+        }
         setListings((prev) => [...prev, ...newItems.map(mapProductItem)]);
         incrementPageIndex();
     };
@@ -154,7 +157,7 @@ function preFetchHook(limit = 10, currentIndex = 1, orderBy = [], idleTimeBefore
 }
 
 const PAGE_SIZE = 5;
-const maxViewSize = 10;
+const MAX_VIEW_SIZE = 10;
 
 function App() {
 
@@ -194,7 +197,7 @@ function App() {
             <h1>Hello World!!</h1>
             <AdsBanner
                 productsListing={productData.listings}
-                maxViewSize={maxViewSize}
+                maxViewSize={MAX_VIEW_SIZE}
                 pageSize={PAGE_SIZE}
             />
             <pre style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(productData.listings)}</pre>
