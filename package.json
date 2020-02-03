@@ -11,8 +11,7 @@
         "build:dev": "webpack --watch client --mode development",
         "dev": "concurrently --kill-others \"npm run build:dev\" \"npm run start\"",
         "prod": "npm run build",
-        "prenode:start": "npm run start",
-        "node:start": "node server.js"
+        "poststart": "node server.js"
     },
     "author": "Jonel B. Pante",
     "license": "MIT",
