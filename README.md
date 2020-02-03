@@ -73,6 +73,9 @@ Client App
 
 You can read the details about the Client App on [client/README.md](./client/README.md).
 
+### Demo
+[https://ascii-emoji-catalog-jonel.herokuapp.com/client/](https://ascii-emoji-catalog-jonel.herokuapp.com/client/)
+
 ### Run the whole App
 
 Build and run the whole App by calling `npm run dev` for Development server and `npm run prod` for Production.
