@@ -1,0 +1,23 @@
+.product_item {
+    width: fit-content;
+    max-width: 100%;
+    margin: 1em 1em;
+    text-align: center;
+    font-size: 12px;
+}
+
+.product_card {
+    border: #00000052 solid 1px;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: #00000047 0px 2px 4px 1px;
+}
+
+.product_item hr{
+    background-color: rgb(0, 123, 255);
+    margin: 5px;
+}
+
+.face pre{
+    margin: 0px;
+}

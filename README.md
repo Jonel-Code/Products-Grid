@@ -68,5 +68,14 @@ You're right! With something open-ended like this you could easily spend a week 
 
 When we grade this exam we're not giving you a "score out of 100" for how many features you complete. We're trying to get some insight into your process, to see the way you work. So, by all means, spend more time if you want to. But you are also free to leave certain features out and give a written explanation of how you would approach it. The best approach is to spend your time on the features that you think is the best way to show us your strengths and experience.
 
+Client App
+----
+
+You can read the details about the Client App on [client/README.md](./client/README.md).
+
+### Run the whole App
+
+Build and run the whole App by calling `npm run dev` for Development server and `npm run prod` for Production.
+
 ### Acknowledgement
 * [Creatella](https://creatella.ventures/)

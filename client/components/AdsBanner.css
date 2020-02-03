@@ -1,0 +1,10 @@
+.modal_text{
+    text-align: center;
+}
+.modal_text p{
+    text-align: left;
+}
+.ad{
+    max-width: min-content;
+    width: 100%;
+}
