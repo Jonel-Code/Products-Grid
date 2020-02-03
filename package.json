@@ -5,13 +5,13 @@
     "description": "Build a grid of product items and ads",
     "main": "server/index.js",
     "scripts": {
-        "start": "json-server server/index.js --routes server/routes.json --middlewares server/handle-delay.js server/handle-ads.js",
+        "start": "node server.js",
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "webpack --mode production",
         "build:dev": "webpack --watch client --mode development",
         "dev": "concurrently --kill-others \"npm run build:dev\" \"npm run start\"",
         "prod": "npm run build",
-        "poststart": "node server.js"
+        "start:json-server": "json-server server/index.js --routes server/routes.json --middlewares server/handle-delay.js server/handle-ads.js"
     },
     "author": "Jonel B. Pante",
     "license": "MIT",
