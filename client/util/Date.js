@@ -39,7 +39,7 @@ export function timeBetweenDate(startDate, endDate) {
 export function relativeDateFromNow(targetDate) {
     const time = timeBetweenDate(Date.now(), targetDate);
 
-    if (0 >= time.days >= -7 && 0 >= time.hours && 0 >= time.minutes) {
+    if (0 >= time.days && time.days >= -7 && 0 >= time.hours && 0 >= time.minutes) {
         const absTime = {
             days: Math.abs(time.days),
             hours: Math.abs(time.hours),

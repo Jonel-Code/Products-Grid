@@ -3,7 +3,7 @@ import './App.css';
 import ProductService from './services/ProductService';
 import AdsBanner from './components/AdsBanner';
 import ProductsGrid from './components/ProductsGrid';
-import DivEndScroll from './components/DivEndScroll';
+import DivBottomScroll from './components/DivBottomScroll';
 
 function productsListingHook(limit = 10) {
 
@@ -20,7 +20,7 @@ function productsListingHook(limit = 10) {
         setListings([]);
         setPageIndex(1);
         setIsEndOfListing(false);
-        // setIsLoading(false);
+        setIsLoading(false);
     };
 
     const appendOrderBy = (order) => {
@@ -175,7 +175,7 @@ function App() {
         preFetchMethods.resetPreFetch();
     };
 
-    const orderBy = (by) => () => {
+    const setSortOrder = (by) => () => {
         fetchMethods.appendOrderBy(by);
         preFetchMethods.resetPreFetch();
     };
@@ -183,23 +183,15 @@ function App() {
     const selectedSort = (sortBy) => productData.orderBy.indexOf(sortBy) >= 0;
     const sortButtonStyle = (sortBy) => `btn ${selectedSort(sortBy) ? 'btn-primary' : 'btn-outline-primary'}`;
 
-    // useLayoutEffect(() => {
-    //     console.log('preFetchedList', preFetchState);
-    // }, [preFetchState.preFetchedList]);
-
-    // useLayoutEffect(() => {
-    //     addNewItems();
-    // }, []);
-
     useLayoutEffect(() => {
         preFetchMethods.resetPreFetch();
         preFetchMethods.initializeIdleCountdown();
     }, [productData.listings]);
 
     return (
-        <DivEndScroll
+        <DivBottomScroll
             className='app'
-            onEnd={addNewItems}
+            onBottomScroll={addNewItems}
         >
             <AdsBanner
                 productsListing={productData.listings}
@@ -208,7 +200,7 @@ function App() {
             />
             <div className="sticky-top nav_header">
                 <div>
-                    <h1>Ascii Emoji Shop</h1>
+                    <h1>Ascii Emoji Catalog</h1>
                 </div>
                 <div className="btn-group mr-2 sort_buttons" role="group" aria-label="Basic example">
                     <div className='middle_align'> Order by:</div>
@@ -216,21 +208,21 @@ function App() {
                         type="button"
                         disabled={productData.isLoading}
                         className={sortButtonStyle('id')}
-                        onClick={orderBy('id')}>
+                        onClick={setSortOrder('id')}>
                         id
                         </button>
                     <button
                         type="button"
                         disabled={productData.isLoading}
                         className={sortButtonStyle('size')}
-                        onClick={orderBy('size')}>
+                        onClick={setSortOrder('size')}>
                         size
                         </button>
                     <button
                         type="button"
                         disabled={productData.isLoading}
                         className={sortButtonStyle('price')}
-                        onClick={orderBy('price')}>
+                        onClick={setSortOrder('price')}>
                         price
                     </button>
                 </div>
@@ -249,7 +241,7 @@ function App() {
                 }
 
             </div>
-        </DivEndScroll>
+        </DivBottomScroll>
     );
 }
 

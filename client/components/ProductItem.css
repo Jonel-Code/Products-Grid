@@ -1,7 +1,9 @@
 .product_item {
     width: fit-content;
+    max-width: 100%;
     margin: 1em 1em;
     text-align: center;
+    font-size: 12px;
 }
 
 .product_card {
